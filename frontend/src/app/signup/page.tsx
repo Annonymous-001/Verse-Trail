@@ -108,12 +108,11 @@ export default function Component() {
       <div className="flex items-center justify-center bg-primary p-6 lg:p-10">
         <div className="mx-auto w-full max-w-md space-y-6">
           <blockquote className="text-lg font-semibold leading-snug text-primary-foreground lg:text-xl lg:leading-normal xl:text-2xl">
-            &ldquo;The customer service I received was exceptional. The support team went above and beyond to address my
-            concerns.&ldquo;
+            &ldquo;Creating this project was a journey of learning and growth. Every challenge was an opportunity to innovate and improve.&ldquo;
           </blockquote>
           <div>
-            <div className="font-semibold text-primary-foreground">Jules Winnfield</div>
-            <div className="text-sm text-primary-foreground/80">CEO, Acme Inc</div>
+            <div className="font-semibold text-primary-foreground">Nitin Swami</div>
+            <div className="text-sm text-primary-foreground/80">Developer</div>
           </div>
         </div>
       </div>
