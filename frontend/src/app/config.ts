@@ -1,0 +1,1 @@
+export const BACKEND_URL="https://backend.nitinswami12577.workers.dev"
