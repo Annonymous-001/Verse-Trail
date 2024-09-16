@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { FormEvent, JSX, SVGProps, useState } from "react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ export default function Signin() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSignin = async (e) => {
+  const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent form submission reload
     try {
       const response = await axios.post(
@@ -34,7 +34,7 @@ export default function Signin() {
       
       sessionStorage.setItem("Token", token);
       router.push('/blogs');
-    } catch (error) {
+    } catch (error:any) {
       setError(error.response?.data?.message || "An error occurred");
     }
   };
@@ -93,7 +93,7 @@ export default function Signin() {
   );
 }
 
-function EyeIcon(props) {
+function EyeIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

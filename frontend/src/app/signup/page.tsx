@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, JSX, SVGProps, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
@@ -21,7 +21,7 @@ export default function Component() {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent form submission reload
     try {
       const response = await axios.post(
@@ -36,7 +36,7 @@ export default function Component() {
       
       sessionStorage.setItem("Token", token);
       router.push("/blogs");
-    } catch (error) {
+    } catch (error:any) {
       setError(error.response?.data?.message || "An error occurred");
     }
   };
@@ -121,7 +121,7 @@ export default function Component() {
   );
 }
 
-function EyeIcon(props) {
+function EyeIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
