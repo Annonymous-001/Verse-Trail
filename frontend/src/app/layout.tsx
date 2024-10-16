@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+// Load local fonts
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -13,11 +14,16 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+// Define metadata for the application
 export const metadata: Metadata = {
   title: "Verse Trail",
-  description: "A blogging app by nitin swami",
+  description: "A blogging app by Nitin Swami",
+  icons: {
+    icon: ".//favicon.ico", // Path to your favicon
+  },
 };
 
+// Define the root layout component
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,6 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/frontend/src/public/weblogo.svg" /> {/* Link to your favicon */}
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
