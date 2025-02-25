@@ -1,41 +1,62 @@
 "use client";
-import { FormEvent, JSX, SVGProps, useState } from "react";
+import { FormEvent, JSX, SVGProps, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import axios from "axios"; // Ensure you import axios
+import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { LoaderCircle } from "lucide-react"; // ✅ Import LoaderCircle
 
 export default function Signin() {
-  const router=useRouter();
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false); // State for toggling password visibility
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ Loading state
+
+  // 🔹 Check if user is already authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/v1/user/me`, {
+          withCredentials: true,
+        });
+
+        if (response.data) {
+          router.push("/blogs"); // Redirect if authenticated
+        }
+      } catch (error) {
+        console.log("User not authenticated, staying on sign-in page.");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
   const handleSignin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent form submission reload
+    e.preventDefault();
+    setLoading(true); // Start loading
+
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BACKEND_URL}/api/v1/user/signin`,
         { username, password },
-        { withCredentials: true } // ✅ Ensures cookies are sent & received
+        { withCredentials: true }
       );
-  
-      console.log("Sign-in successful", response.data);
-      
-      // ✅ No need to store JWT in sessionStorage
-      router.push('/blogs'); // Redirect to blogs page
-  
+
+      router.push("/blogs"); // Redirect after successful login
     } catch (error: any) {
       setError(error.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -46,7 +67,7 @@ export default function Signin() {
           <h1 className="text-3xl font-bold tracking-tight">Sign in to your account</h1>
           <p className="text-muted-foreground">
             Don't have an account?{" "}
-            <Link href="signup" className="font-medium text-primary hover:underline" prefetch={false}>
+            <Link href="/signup" className="font-medium text-primary hover:underline" prefetch={false}>
               Sign up
             </Link>
           </p>
@@ -67,7 +88,7 @@ export default function Signin() {
             <Input
               onChange={(e) => setPassword(e.target.value)}
               id="password"
-              type={passwordVisible ? "text" : "password"} // Toggle between text and password
+              type={passwordVisible ? "text" : "password"}
               placeholder="********"
               required
             />
@@ -84,8 +105,16 @@ export default function Signin() {
           </div>
 
           {error && <div className="text-red-500">{error}</div>}
-          <Button type="submit" className="w-full">
-            Sign in
+          
+          {/* ✅ Sign-in Button with Loading State */}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? (
+              <>
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
       </Card>

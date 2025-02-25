@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
-import { sign } from 'hono/jwt';
+import { sign, verify } from 'hono/jwt';
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { signinInput, signupInput } from '@100xdevs/medium-common';
 import { cors } from 'hono/cors';
-import { setCookie, deleteCookie } from 'hono/cookie';
+import { setCookie, deleteCookie, getCookie } from 'hono/cookie';
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -122,4 +122,37 @@ userRouter.post('/logout', async (c) => {
   });
 
   return c.json({ message: "Logged out successfully" });
+});
+userRouter.get("/me", async (c) => {
+  const token = getCookie(c, "token"); // Get token from cookie
+
+  if (!token) {
+    c.status(401);
+    return c.json({ message: "Unauthorized" });
+  }
+
+  try {
+    const payload = await verify(token, c.env.JWT_SECRET) as { id: string };
+    if (!payload.id) {
+      throw new Error("Invalid token payload");
+    }
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.id },
+      select: { id: true, username: true, name: true }, // Select necessary fields
+    });
+
+    if (!user) {
+      c.status(404);
+      return c.json({ message: "User not found" });
+    }
+
+    return c.json(user);
+  } catch (error) {
+    c.status(401);
+    return c.json({ message: "Invalid token" });
+  }
 });

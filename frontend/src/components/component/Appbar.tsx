@@ -1,22 +1,43 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+"use client";
+
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import axios from "axios";
+import { BACKEND_URL } from "@/app/config";
+
 
 export default function Appbar() {
+  const [user, setUser] = useState<{ name?: string } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/v1/user/me`, {
+          withCredentials: true, // ✅ Ensures cookies are sent
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error("Failed to fetch user");
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const avatarFallback = user?.name ? user.name.charAt(0).toUpperCase() : "U";
 
   return (
-    <nav className="flex items-center justify-between  bg-background border-b-2  mb-6  pb-3 pt-0 ">
+    <nav className="flex items-center justify-between bg-background border-b-2 mb-6 pb-3 pt-0">
       <div className="flex items-center space-x-4">
-        {/* Logo */}
-        
         <span className="text-xl font-bold">Verse Trail</span>
       </div>
 
       <div className="flex items-center space-x-4">
-        {/* New Button */}
         <Button>
-        <Link href="/publish"  prefetch={false}>
-          New
+          <Link href="/publish" prefetch={false}>
+            New
           </Link>
           <svg
             className="ml-2 h-4 w-4"
@@ -33,12 +54,11 @@ export default function Appbar() {
           </svg>
         </Button>
 
-        {/* Avatar */}
         <Avatar>
-          <AvatarImage src="/placeholder.svg?height=32&width=32" alt="@user" />
-          <AvatarFallback>U</AvatarFallback>
+          <AvatarImage src="/placeholder.svg?height=32&width=32" alt={user?.name || "User"} />
+          <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
       </div>
     </nav>
-  )
+  );
 }
