@@ -55,7 +55,7 @@ userRouter.post('/signup', async (c) => {
     httpOnly: true,
     secure: true, // Secure only in production
     path: '/',
-    sameSite: 'Strict',
+    sameSite: 'None',
     maxAge: expiresInSeconds
   });
 
@@ -99,7 +99,7 @@ userRouter.post('/signin', async (c) => {
       httpOnly: true,
       secure: true, // Secure only in production
       path: '/',
-      sameSite: 'Strict',
+      sameSite: 'None',
       maxAge: expiresInSeconds
     });
 
@@ -116,7 +116,7 @@ userRouter.post('/logout', async (c) => {
   setCookie(c, 'token', '', {
     path: '/',
     secure: true,
-    sameSite: 'Strict',
+    sameSite: 'None',
     httpOnly: true,
     expires: new Date(0) // Forces expiration
   });
