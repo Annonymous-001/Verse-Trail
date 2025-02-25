@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import {  verify } from 'hono/jwt'
 import {  PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { UpdateBlogInput,createBlogInput, updateBlogInput } from '@100xdevs/medium-common';
+import { createBlogInput, updateBlogInput } from '@100xdevs/medium-common';
 import { cors } from 'hono/cors';
  
 
@@ -31,7 +31,7 @@ blogRouter.use('/*', async (c, next) => {
 		}
 		const token = jwt.split(' ')[1];
 		const user = await verify(token, c.env.JWT_SECRET);
-		if (user) {
+		if (user && typeof user.id === 'string') {
 			c.set('userId', user.id);
 			await next();
 		}

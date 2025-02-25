@@ -33,10 +33,9 @@ export default function BlogPost() {
         if (!token) throw new Error("User is not authenticated");
 
         const response = await axios.get(`${BACKEND_URL}/api/v1/blog/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+          withCredentials:true,
           },
-        });
+        );
 
         setBlogPost(response.data);
       } catch (error) {

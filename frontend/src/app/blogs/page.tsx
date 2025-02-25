@@ -27,10 +27,8 @@ export default function Blogs() {
     const fetchBlogPosts = async () => {
       try {
         const token = sessionStorage.getItem("Token");
-        const response = await axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await axios.get(`${BACKEND_URL}/api/v1/blog/bulk`,{
+          withCredentials:true,
         });
         setBlogPosts(response.data);
       } catch (error) {

@@ -16,6 +16,9 @@ export default function Component() {
   const [name, setName] = useState(""); // State for the name
   const [passwordVisible, setPasswordVisible] = useState(false); // State for toggling password visibility
   const [error, setError] = useState("");
+  const [isnameFocused, setIsNameFocused] = useState(false);
+  const [isemailFocused, setIsEmailFocused]=useState(false);
+
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -26,15 +29,12 @@ export default function Component() {
     try {
       const response = await axios.post(
         `${BACKEND_URL}/api/v1/user/signup`,
-        { username, password, name } // Include the name in the request payload
+        { username, password, name },{
+          withCredentials:true,
+        } // Include the name in the request payload
       );
       console.log("Sign-up successful", response.data);
       
-      const token = response.data.jwt;
-
-      // Store JWT token in sessionStorage
-      
-      sessionStorage.setItem("Token", token);
       router.push("/blogs");
     } catch (error:any) {
       setError(error.response?.data?.message || "An error occurred");
@@ -60,23 +60,28 @@ export default function Component() {
               <Input
                 id="name"
                 type="text"
-                placeholder="John Doe"
+                placeholder={isnameFocused ? "" : "your name"}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onFocus={() => setIsNameFocused(true)} 
+                onBlur={() => setIsNameFocused(false)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
+  <Label htmlFor="email">Email</Label>
+  <Input
+    id="email"
+    type="email"
+    placeholder={isemailFocused ? "" : "xyz@example.com"} // Dynamically set placeholder
+    value={username}
+    onChange={(e) => setUsername(e.target.value)}
+    onFocus={() => setIsEmailFocused(true)} // Clear placeholder on focus
+    onBlur={() => setIsEmailFocused(false)} // Reset placeholder on blur
+    required
+  />
+</div>
+
             <div className="relative space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input

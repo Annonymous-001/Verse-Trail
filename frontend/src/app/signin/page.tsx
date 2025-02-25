@@ -25,16 +25,16 @@ export default function Signin() {
     try {
       const response = await axios.post(
         `${BACKEND_URL}/api/v1/user/signin`,
-        { username, password }
+        { username, password },
+        { withCredentials: true } // ✅ Ensures cookies are sent & received
       );
+  
       console.log("Sign-in successful", response.data);
-      const token = response.data;
-
-      // Store JWT token in sessionStorage
       
-      sessionStorage.setItem("Token", token);
-      router.push('/blogs');
-    } catch (error:any) {
+      // ✅ No need to store JWT in sessionStorage
+      router.push('/blogs'); // Redirect to blogs page
+  
+    } catch (error: any) {
       setError(error.response?.data?.message || "An error occurred");
     }
   };
