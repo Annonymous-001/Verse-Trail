@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,26 +21,33 @@ interface BlogPost {
 }
 
 export default function Blogs() {
+  const router = useRouter();
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBlogPosts = async () => {
+    const checkAuthAndFetchBlogs = async () => {
       try {
+        await axios.get(`${BACKEND_URL}/api/v1/user/me`, {
+          withCredentials: true,
+        });
+
+        // User is authenticated, fetch blog posts
         const response = await axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {
           withCredentials: true,
         });
         setBlogPosts(response.data);
       } catch (error) {
-        setError((error as Error).message || "An error occurred");
+        console.log("User not authenticated, redirecting...");
+        router.push("/signup"); // Redirect to signup if not authenticated
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBlogPosts();
-  }, []);
+    checkAuthAndFetchBlogs();
+  }, [router]);
 
   if (loading) {
     return (
@@ -105,3 +113,4 @@ export default function Blogs() {
     </div>
   );
 }
+
