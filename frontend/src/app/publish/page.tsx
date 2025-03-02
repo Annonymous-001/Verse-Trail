@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,53 +12,31 @@ import Appbar from '@/components/component/Appbar';
 export default function Publish() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Retrieve the token when the component mounts
-    const retrievedToken = sessionStorage.getItem("Token");
-    if (retrievedToken) {
-      setToken(retrievedToken);
-    }
-  }, []);
 
   const handlePublish = async () => {
-    if (!token) {
-      console.error('Token is not available. Please log in.');
-      alert('You must be logged in to publish a blog post.');
-      return;
-    }
-
     try {
-      // Log the token and request data for debugging
-      console.log('Publishing blog post with token:', token);
-      console.log('Request data:', { title, content });
+      console.log('Publishing blog post:', { title, content });
 
-      // Make the POST request to the API
-      const response = await axios.post(`${BACKEND_URL}/api/v1/blog/create`,
-        { title, content }, // Payload
+      const response = await axios.post(
+        `${BACKEND_URL}/api/v1/blog/create`,
+        { title, content },
         {
+          withCredentials: true, // Automatically includes HTTP-only cookies
           headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json', // Ensure content type is set
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      // Log the response data for debugging
       console.log('Response data:', response.data);
-      
-      // Handle successful post creation
-      handleafterPublish();
+      handleAfterPublish();
     } catch (e) {
-      // Log the error and alert the user
       console.error('Error publishing blog post:', e);
       alert('Failed to publish blog post. Please try again.');
     }
   };
 
-  const handleafterPublish = () => {
-    console.log('Publishing blog post:', { title, content });
+  const handleAfterPublish = () => {
     setTitle('');
     setContent('');
     alert('Blog post published successfully!');
@@ -66,7 +44,7 @@ export default function Publish() {
 
   return (
     <div className='m-2 mt-2'>
-     <Appbar ></Appbar>
+     <Appbar />
     <div className="min-h-screen bg-white p-6 flex items-center justify-center">
       <Card className="w-full max-w-4xl border-2 border-black">
         <CardHeader className="bg-black text-white p-6">
@@ -105,7 +83,7 @@ export default function Publish() {
         </CardContent>
         <CardFooter className="bg-white p-6">
           <Button 
-            onClick={handlePublish} // Changed to handlePublish for direct publishing
+            onClick={handlePublish} 
             disabled={!title || !content}
             className="w-full py-3 text-lg bg-white text-black font-semibold rounded-none transition duration-300 ease-in-out hover:bg-black hover:text-black border-2 border-black"
             >
@@ -114,6 +92,6 @@ export default function Publish() {
         </CardFooter>
       </Card>
     </div>
-            </div>
+  </div>
   );
 }

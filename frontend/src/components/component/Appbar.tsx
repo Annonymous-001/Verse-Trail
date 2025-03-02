@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import axios from "axios";
 import { BACKEND_URL } from "@/app/config";
+import Image from "next/image";
 
 
 export default function Appbar() {
@@ -31,7 +32,14 @@ export default function Appbar() {
   return (
     <nav className="flex items-center justify-between bg-background border-b-2 mb-6 pb-3 pt-0">
       <div className="flex items-center space-x-4">
-        <span className="text-xl font-bold">Verse Trail</span>
+        {/* <span className="text-xl font-bold">Verse Trail</span> */}
+        <Image
+        src="/logo.png"
+        alt="Verse Trail Logo"
+        width={40}
+        height={40}
+        priority
+        />
       </div>
 
       <div className="flex items-center space-x-4">
